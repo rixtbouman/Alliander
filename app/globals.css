@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FAFAFA;
+  --foreground: #0A0A0A;
+  --cream: #F5F3EF;
+  --cobalt: #0047AB;
+  --violet: #7C3AED;
+  --muted: #71717A;
+  --border: #E4E4E7;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-cream: var(--cream);
+  --color-cobalt: var(--cobalt);
+  --color-violet: var(--violet);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Swiss-style typography */
+.label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.data-label {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--cobalt);
+  font-weight: 500;
+}
+
+/* Archival card style */
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  padding: 2rem;
+}
+
+.card-cream {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  padding: 2rem;
+}
+
+/* Button styles */
+.btn-primary {
+  background: var(--foreground);
+  color: white;
+  padding: 1rem 2rem;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #2A2A2A;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
+  padding: 1rem 2rem;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+}
+
+.btn-outline:hover {
+  background: var(--foreground);
+  color: white;
+}
+
+/* Selection chip */
+.chip {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border);
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip:hover {
+  border-color: var(--foreground);
+}
+
+.chip.selected {
+  background: var(--foreground);
+  color: white;
+  border-color: var(--foreground);
+}
+
+/* Scenario text styling */
+.scenario-text {
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--foreground);
+}
+
+/* Grid container */
+.grid-container {
+  display: grid;
+  gap: 1px;
+  background: var(--border);
+}
+
+.grid-container > * {
+  background: white;
 }
