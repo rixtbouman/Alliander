@@ -168,24 +168,78 @@ export default function Home() {
   // Check if inputs are complete
   const inputsComplete = inputs.resources && inputs.system && inputs.dominant_value && inputs.technology_1 && inputs.technology_2
 
-  // Generate scenario (placeholder - will connect to API)
+  // Call generation API
+  const callGenerateAPI = async (step: string, extraParams: Record<string, string> = {}) => {
+    const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: session?.id,
+        step,
+        resources: inputs.resources,
+        system: inputs.system,
+        dominant_value: inputs.dominant_value,
+        technology_1: inputs.technology_1,
+        technology_2: inputs.technology_2,
+        ...extraParams
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.details || 'Generation failed')
+    }
+
+    return response.json()
+  }
+
+  // Generate scenario
   const generateScenario = async () => {
     if (!session || !inputsComplete) return
     setIsLoading(true)
 
-    // Save inputs to Supabase
-    await supabase.from('session_inputs').insert({
-      session_id: session.id,
-      resources: inputs.resources,
-      system: inputs.system,
-      dominant_value: inputs.dominant_value,
-      technology_1: inputs.technology_1,
-      technology_2: inputs.technology_2
-    })
+    try {
+      // Save inputs to Supabase
+      await supabase.from('session_inputs').insert({
+        session_id: session.id,
+        resources: inputs.resources,
+        system: inputs.system,
+        dominant_value: inputs.dominant_value,
+        technology_1: inputs.technology_1,
+        technology_2: inputs.technology_2
+      })
 
-    // TODO: Call generation API
-    // For now, advance to next step
-    await advanceStep()
+      // Generate seed first
+      console.log('Generating seed...')
+      await callGenerateAPI('seed')
+
+      // Generate distant future
+      console.log('Generating distant future...')
+      const distantResult = await callGenerateAPI('distant_future')
+      setOutputs(prev => ({ ...prev, distant_future: distantResult.content }))
+
+      // Advance to show distant future
+      await advanceStep()
+
+      // Generate not so distant in background
+      console.log('Generating not so distant...')
+      const notSoDistantResult = await callGenerateAPI('not_so_distant', {
+        previous_scenario: distantResult.content
+      })
+      setOutputs(prev => ({ ...prev, not_so_distant: notSoDistantResult.content }))
+
+      // Generate near future in background
+      console.log('Generating near future...')
+      const nearResult = await callGenerateAPI('near_future', {
+        previous_scenario: notSoDistantResult.content
+      })
+      setOutputs(prev => ({ ...prev, near_future: nearResult.content }))
+
+    } catch (error) {
+      console.error('Generation error:', error)
+      alert('Error generating scenario: ' + (error instanceof Error ? error.message : 'Unknown error'))
+    }
+
     setIsLoading(false)
   }
 
@@ -194,13 +248,26 @@ export default function Home() {
     if (!session || !inputs.intervention) return
     setIsLoading(true)
 
-    await supabase
-      .from('session_inputs')
-      .update({ intervention: inputs.intervention })
-      .eq('session_id', session.id)
+    try {
+      await supabase
+        .from('session_inputs')
+        .update({ intervention: inputs.intervention })
+        .eq('session_id', session.id)
 
-    // TODO: Call intervention API
-    await advanceStep()
+      // Generate intervention consequences
+      console.log('Generating intervention consequences...')
+      const result = await callGenerateAPI('intervention', {
+        intervention: inputs.intervention,
+        previous_scenario: outputs.distant_future
+      })
+      setOutputs(prev => ({ ...prev, consequences: result.content }))
+
+      await advanceStep()
+    } catch (error) {
+      console.error('Intervention error:', error)
+      alert('Error: ' + (error instanceof Error ? error.message : 'Unknown error'))
+    }
+
     setIsLoading(false)
   }
 
