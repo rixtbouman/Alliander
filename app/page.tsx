@@ -65,13 +65,23 @@ export default function Home() {
 
   // Create session (moderator)
   const createSession = async () => {
+    console.log('Creating session...')
     const code = generateCode()
+    console.log('Generated code:', code)
+
     const { data, error } = await supabase
       .from('sessions')
       .insert({ code, current_step: 1, language, status: 'active' })
       .select()
       .single()
 
+    if (error) {
+      console.error('Supabase error:', error)
+      alert('Error creating session: ' + error.message)
+      return
+    }
+
+    console.log('Session created:', data)
     if (data) {
       setSession(data)
       setSessionCode(code)
@@ -135,6 +145,7 @@ export default function Home() {
 
   // Handle role selection
   const selectRole = (selectedRole: UserRole) => {
+    console.log('Role selected:', selectedRole)
     setRole(selectedRole)
     if (selectedRole === 'moderator') {
       createSession()
