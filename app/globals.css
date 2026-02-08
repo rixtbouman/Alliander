@@ -4,8 +4,8 @@
   --background: #FAFAFA;
   --foreground: #0A0A0A;
   --cream: #F5F3EF;
-  --cobalt: #0047AB;
-  --violet: #7C3AED;
+  --blue-light: #7877f6;
+  --blue-dark: #0000FF;
   --muted: #71717A;
   --border: #E4E4E7;
 }
@@ -14,22 +14,44 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-cream: var(--cream);
-  --color-cobalt: var(--cobalt);
-  --color-violet: var(--violet);
+  --color-blue-light: var(--blue-light);
+  --color-blue-dark: var(--blue-dark);
   --color-muted: var(--muted);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-roboto-mono);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 200;
+  line-height: 1.5;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Headers - Roboto Mono */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-mono), monospace;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 /* Swiss-style typography */
 .label {
+  font-family: var(--font-mono), monospace;
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -37,10 +59,11 @@ body {
 }
 
 .data-label {
+  font-family: var(--font-mono), monospace;
   font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--cobalt);
+  color: var(--blue-dark);
   font-weight: 500;
 }
 
@@ -48,37 +71,64 @@ body {
 .card {
   background: white;
   border: 1px solid var(--border);
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .card-cream {
   background: var(--cream);
   border: 1px solid var(--border);
-  padding: 2rem;
+  padding: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .card, .card-cream {
+    padding: 2rem;
+  }
 }
 
 /* Button styles */
 .btn-primary {
   background: var(--foreground);
   color: white;
-  padding: 1rem 2rem;
-  font-size: 14px;
+  padding: 1rem 1.5rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  font-weight: 500;
   letter-spacing: 0.02em;
   transition: background 0.2s;
+  width: 100%;
+  text-align: center;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
   background: #2A2A2A;
 }
 
+.btn-primary:active {
+  background: #1A1A1A;
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-outline {
   background: transparent;
   color: var(--foreground);
   border: 1px solid var(--foreground);
-  padding: 1rem 2rem;
-  font-size: 14px;
+  padding: 1rem 1.5rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  font-weight: 500;
   letter-spacing: 0.02em;
   transition: all 0.2s;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
 }
 
 .btn-outline:hover {
@@ -86,31 +136,49 @@ body {
   color: white;
 }
 
-/* Selection chip */
+.btn-outline:active {
+  transform: scale(0.98);
+}
+
+/* Selection chip - mobile optimized */
 .chip {
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.25rem;
   border: 1px solid var(--border);
   background: white;
-  font-size: 14px;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .chip:hover {
-  border-color: var(--foreground);
+  border-color: var(--blue-light);
+}
+
+.chip:active {
+  transform: scale(0.97);
 }
 
 .chip.selected {
-  background: var(--foreground);
+  background: var(--blue-dark);
   color: white;
-  border-color: var(--foreground);
+  border-color: var(--blue-dark);
 }
 
 /* Scenario text styling */
 .scenario-text {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.8;
   color: var(--foreground);
+  font-weight: 300;
+}
+
+@media (min-width: 640px) {
+  .scenario-text {
+    font-size: 18px;
+  }
 }
 
 /* Grid container */
@@ -122,4 +190,76 @@ body {
 
 .grid-container > * {
   background: white;
+}
+
+/* Input styles - mobile optimized */
+input, textarea {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 16px; /* Prevents iOS zoom */
+  font-weight: 300;
+  border: 1px solid var(--border);
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--blue-light);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+/* Code display */
+.code-display {
+  font-family: var(--font-mono), monospace;
+  font-size: 2rem;
+  letter-spacing: 0.15em;
+  color: var(--blue-dark);
+}
+
+@media (min-width: 640px) {
+  .code-display {
+    font-size: 2.5rem;
+  }
+}
+
+/* Mobile safe area padding */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+
+/* Touch-friendly spacing */
+@media (max-width: 639px) {
+  .touch-spacing > * + * {
+    margin-top: 0.75rem;
+  }
+}
+
+/* Loading state */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Accent text */
+.text-accent {
+  color: var(--blue-dark);
+}
+
+.text-accent-light {
+  color: var(--blue-light);
+}
+
+/* Background accent */
+.bg-accent {
+  background: var(--blue-dark);
+  color: white;
+}
+
+.bg-accent-light {
+  background: var(--blue-light);
+  color: white;
 }
